@@ -10,9 +10,10 @@ import { CardsService } from '../services/cards.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 export interface Card {
-  id: string;
+  id: number;
   name: string;
-  type: string;
+  url: string;
+  image: string;
 }
 
 interface CardState {
@@ -33,18 +34,15 @@ export const CardStore = signalStore(
   withComputed(({ cards }) => ({
     cardList: computed(() => cards()),
     cardsCount: computed(() => cards().length),
-    spellCards: computed(
-      () => cards().filter((card) => card.type === 'Spell Card').length
-    ),
   })),
   withMethods((store, cardsService = inject(CardsService)) => ({
     loadPages: rxMethod<number>(
       pipe(
-        tap(() => patchState(store, { state: 'Loading' })),
+        tap(() => patchState(store, { state: 'Loading'})),
         switchMap((page) => {
           return cardsService.loadCards(page).pipe(
             tap((cards) => {
-              patchState(store, { cards, state: 'Loaded' });
+              patchState(store, { cards, state: 'Loaded'});
             })
           );
         })

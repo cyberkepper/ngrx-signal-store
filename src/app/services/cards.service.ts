@@ -11,9 +11,20 @@ export class CardsService {
 
   loadCards(page = 0) {
     return this.http
-      .get<{ data: Card[] }>(
-        `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=5&offset=${page * 5}`
-      )
-      .pipe(map((response) => response.data));
+      .get(`https://pokeapi.co/api/v2/pokemon?limit=5&offset=${page * 5}`)
+      .pipe(
+        map((response: any) => {
+          return response.results.map((card: any, index: number) => {
+            return {
+              id: response.results[index].url.split('/')[6],
+              name: card.name,
+              url: card.url,
+              image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                response.results[index].url.split('/')[6]
+              }.png`,
+            } as Card;
+          });
+        })
+      );
   }
 }

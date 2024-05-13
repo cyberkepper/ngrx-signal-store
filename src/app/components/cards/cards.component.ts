@@ -13,16 +13,6 @@ export class CardsComponent {
   readonly store = inject(CardStore);
   page = signal(0);
 
-  constructor() {
-    effect(
-      () => {
-        console.log('Called effect!!');
-        this.store.loadPages(this.page());
-      },
-      { allowSignalWrites: true }
-    );
-  }
-
   ngOnInit() {
     this.store.loadPages(this.page());
   }
